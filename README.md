@@ -33,7 +33,6 @@ echo "host    all         all         127.0.0.1/32          trust"  >> /etc/post
 echo "local   all         all                               trust" >> /etc/postgresql/9.4/main/pg_hba.conf
 createuser -a -d -W -U postgres usr
 createdb webprof
-
 ```
 
 ## If using Sublime Text
@@ -58,7 +57,7 @@ psql
 \d users
 \q
 exit
-
+python app.py
 ```
 
 ## How to start js dev mode
