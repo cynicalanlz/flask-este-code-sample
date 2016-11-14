@@ -33,14 +33,6 @@ echo "host    all         all         127.0.0.1/32          trust"  >> /etc/post
 echo "local   all         all                               trust" >> /etc/postgresql/9.4/main/pg_hba.conf
 createuser -a -d -W -U postgres usr
 createdb webprof
-su postgres
-psql
-\l
-\c webprof
-\dt
-\d users
-\q
-exit
 
 ```
 
@@ -57,6 +49,24 @@ git clone
 pip install autoenv==1.0.0
 bash
 cd webprof
-python manage.py
+python manage.py db upgrade
+su postgres
+psql
+\l
+\c webprof
+\dt
+\d users
+\q
+exit
+
+```
+
+## How to start js dev mode
+
+
+```
+cd **project_folder**/js
+npm install 
+gulp
 
 ```
