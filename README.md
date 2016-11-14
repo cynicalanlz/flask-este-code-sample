@@ -8,7 +8,7 @@ Flask app with:
 Stack: Python 3, Flask, SQLAlchemy, Alembic, Bootstrap.
 Other reqs: PEP 8.
 
-## Installing on ubuntu
+## Installing on ubuntu 14.04
 
 ```
 sudo apt-get install build-essential checkinstall
