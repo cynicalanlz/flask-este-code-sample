@@ -6,7 +6,6 @@ import { Observable } from 'rxjs/Observable';
 import { ValidationError } from '../lib/validation';
 
 export const ON_AUTH = 'ON_AUTH';
-export const RESET_PASSWORD = 'RESET_PASSWORD';
 export const SIGN_IN = 'SIGN_IN';
 export const SIGN_IN_DONE = 'SIGN_IN_DONE';
 export const SIGN_IN_FAIL = 'SIGN_IN_FAIL';
@@ -18,11 +17,6 @@ export const SIGN_UP_FAIL = 'SIGN_UP_FAIL';
 export const onAuth = (firebaseUser: ?Object) => ({
   type: ON_AUTH,
   payload: { firebaseUser },
-});
-
-export const resetPassword = (email: string) => ({
-  type: RESET_PASSWORD,
-  payload: { email },
 });
 
 export const signIn = (providerName: string, options?: Object) => ({
@@ -85,31 +79,18 @@ const mapFirebaseErrorToEsteValidationError = (code) => {
   return new ValidationError(code, { prop });
 };
 
-const resetPasswordEpic = (action$, { firebaseAuth }) =>
-  action$.ofType(RESET_PASSWORD)
-    .mergeMap(({ payload: { email } }) => {
-      firebaseAuth().sendPasswordResetEmail(email);
-      return Observable.of();
-    });
 
-const facebookPermissions = [
-  'email',
-  'public_profile',
-  'user_friends',
-];
-
-const signInEpic = (action$, { FBSDK, firebaseAuth, validate }) => {
+const signInEpic = (action$, { firebaseAuth, validate }) => {
   // groups.google.com/forum/#!msg/firebase-talk/643d_lwUAMI/bfQyn8D-BQAJ
   // stackoverflow.com/a/33997042/233902
-  const isMobileFacebookApp = () => {
-    const ua = navigator.userAgent || navigator.vendor; // eslint-disable-line no-undef
-    return ua.indexOf('FBAN') > -1 || ua.indexOf('FBAV') > -1;
-  };
 
   const signInWithEmailAndPassword = (options) => {
+
     const { email, password } = options;
     const promise = validateEmailAndPassword(validate, { email, password })
       .then(() => firebaseAuth().signInWithEmailAndPassword(email, password));
+
+      
     return Observable.from(promise)
       .map(firebaseUser => signInDone(firebaseUser))
       .catch((error) => {
@@ -135,41 +116,14 @@ const signInEpic = (action$, { FBSDK, firebaseAuth, validate }) => {
         return Observable.of(signInFail(error));
       });
 
-  const nativeSignIn = () =>
-    Observable.from(FBSDK.LoginManager.logInWithReadPermissions(facebookPermissions))
-      .mergeMap((result) => {
-        if (result.isCancelled) {
-          // Mimic Firebase error to have the same universal API.
-          const error: any = new Error('auth/popup-closed-by-user');
-          error.code = 'auth/popup-closed-by-user';
-          throw error;
-        }
-        return Observable.from(FBSDK.AccessToken.getCurrentAccessToken());
-      })
-      .mergeMap(({ accessToken }) => {
-        const facebookCredential = firebaseAuth.FacebookAuthProvider
-          .credential(accessToken.toString());
-        return Observable.from(firebaseAuth().signInWithCredential(facebookCredential));
-      })
-      .map(firebaseUser => signInDone(firebaseUser))
-      .catch(error => Observable.of(signInFail(error)));
-
   return action$.ofType(SIGN_IN)
     .mergeMap(({ payload: { providerName, options } }) => {
-      if (options && options.isNative) {
-        return nativeSignIn('facebook');
-      }
+
       if (providerName === 'password') {
         return signInWithEmailAndPassword(options);
       }
       // TODO: Add more providers.
-      invariant(providerName === 'facebook', `${providerName} provider not supported.`);
-      const provider = new firebaseAuth.FacebookAuthProvider();
       // Remember, a user can revoke anything.
-      provider.addScope(facebookPermissions.join(','));
-      if (isMobileFacebookApp()) {
-        return signInWithRedirect(provider);
-      }
       return signInWithPopup(provider);
     });
 };
@@ -192,7 +146,6 @@ const signUpEpic = (action$, { firebaseAuth, validate }) =>
     });
 
 export const epics = [
-  resetPasswordEpic,
   signInEpic,
   signUpEpic,
 ];

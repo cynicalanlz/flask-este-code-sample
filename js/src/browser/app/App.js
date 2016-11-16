@@ -15,13 +15,9 @@ import { connect } from 'react-redux';
 // Pages
 import FieldsPage from '../fields/FieldsPage';
 import UsersPage from '../users/UsersPage';
-import HomePage from '../home/HomePage';
-import IntlPage from '../intl/IntlPage';
 import MePage from '../me/MePage';
 import NotFoundPage from '../notfound/NotFoundPage';
-import OfflinePage from '../offline/OfflinePage';
 import SignInPage from '../auth/SignInPage';
-import TodosPage from '../todos/TodosPage';
 
 // v4-alpha.getbootstrap.com/getting-started/introduction/#starter-template
 const bootstrap4Metas: any = [
@@ -58,13 +54,9 @@ let App = ({ currentLocale, currentTheme }) => (
         ]}
       />
       <Header />
-      <Match exactly pattern="/" component={HomePage} />
+      <Match exactly pattern="/" component={UsersPage} />
       <Match pattern="/fields" component={FieldsPage} />
-      <Match pattern="/users" component={UsersPage} />
-      <Match pattern="/intl" component={IntlPage} />
-      <Match pattern="/offline" component={OfflinePage} />
       <Match pattern="/signin" component={SignInPage} />
-      <Match pattern="/todos" component={TodosPage} />
       <Match authorized pattern="/me" component={MePage} />
       <Miss component={NotFoundPage} />
       <Footer />

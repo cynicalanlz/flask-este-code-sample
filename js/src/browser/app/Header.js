@@ -16,28 +16,12 @@ const styles = {
 
 const Header = ({ viewer }) => (
   <Toolbar style={styles.toolbar}>
-    <Link bold inverted exactly to="/">
-      <FormattedMessage {...linksMessages.home} />
-    </Link>
-    <Space x={2} />
-    <Link bold inverted to="/users">
+    <Link bold inverted to="/">
       <FormattedMessage {...linksMessages.users} />
-    </Link>
-    <Space x={2} />
-    <Link bold inverted to="/todos">
-      <FormattedMessage {...linksMessages.todos} />
     </Link>
     <Space x={2} />
     <Link bold inverted to="/fields">
       <FormattedMessage {...linksMessages.fields} />
-    </Link>
-    <Space x={2} />
-    <Link bold inverted to="/intl">
-      <FormattedMessage {...linksMessages.intl} />
-    </Link>
-    <Space x={2} />
-    <Link bold inverted to="/offline">
-      <FormattedMessage {...linksMessages.offline} />
     </Link>
     <Space x={2} />
     <Link bold inverted to="/me">

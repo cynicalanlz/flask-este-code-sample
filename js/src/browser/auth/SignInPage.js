@@ -30,9 +30,6 @@ let SignInPage = ({ disabled, intl, location, viewer }) => (
       <Title message={linksMessages.signIn} />
       <PageHeader heading={intl.formatMessage(linksMessages.signIn)} />
       <Block>
-        <Social />
-      </Block>
-      <Block>
         <Email />
       </Block>
       <SignInError />

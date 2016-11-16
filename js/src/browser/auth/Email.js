@@ -5,7 +5,7 @@ import emailMessages from '../../common/auth/emailMessages';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { connect } from 'react-redux';
 import { fields } from '../../common/lib/redux-fields';
-import { resetPassword, signIn, signUp } from '../../common/auth/actions';
+import { signIn, signUp } from '../../common/auth/actions';
 import {
   ButtonOutline as Button,
   Form,
@@ -18,10 +18,6 @@ import {
   focus,
 } from '../app/components';
 
-type State = {
-  forgetPasswordIsShown: bool,
-  recoveryEmailSent: bool,
-};
 
 class Email extends React.Component {
 
@@ -29,22 +25,13 @@ class Email extends React.Component {
     disabled: React.PropTypes.bool.isRequired,
     fields: React.PropTypes.object.isRequired,
     intl: intlShape.isRequired,
-    resetPassword: React.PropTypes.func.isRequired,
     signIn: React.PropTypes.func.isRequired,
     signUp: React.PropTypes.func.isRequired,
   };
 
-  state: State = {
-    forgetPasswordIsShown: false,
-    recoveryEmailSent: false,
-  };
 
   onFormSubmit = () => {
-    if (this.state.forgetPasswordIsShown) {
-      this.resetPassword();
-    } else {
-      this.signInViaPassword();
-    }
+    this.signInViaPassword();
   };
 
   onSignUpClick = () => {
@@ -52,20 +39,6 @@ class Email extends React.Component {
     signUp('password', fields.$values());
   };
 
-  onForgetPasswordClick = () => {
-    const { forgetPasswordIsShown } = this.state;
-    this.setState({ forgetPasswordIsShown: !forgetPasswordIsShown });
-  };
-
-  resetPassword() {
-    const { fields, resetPassword } = this.props;
-    const { email } = fields.$values();
-    resetPassword(email);
-    this.setState({
-      forgetPasswordIsShown: false,
-      recoveryEmailSent: true,
-    });
-  }
 
   signInViaPassword() {
     const { fields, signIn } = this.props;
@@ -74,80 +47,47 @@ class Email extends React.Component {
 
   render() {
     const { disabled, fields, intl } = this.props;
-    const { forgetPasswordIsShown, recoveryEmailSent } = this.state;
-    const legendMessage = forgetPasswordIsShown
-      ? emailMessages.passwordRecoveryLegend
-      : emailMessages.emailLegend;
-
     return (
       <Form onSubmit={this.onFormSubmit} small>
         <Panel theme="primary">
           <PanelHeader>
-            <FormattedMessage {...legendMessage} />
+            Form
           </PanelHeader>
           <Input
             {...fields.email}
             disabled={disabled}
-            label=""
+            label="Email"
             maxLength={100}
             placeholder={intl.formatMessage(emailMessages.emailPlaceholder)}
           />
-          {!forgetPasswordIsShown &&
-            <Input
-              {...fields.password}
+          <Input
+            {...fields.password}
+            disabled={disabled}
+            label="Pass"
+            maxLength={1000}
+            placeholder={intl.formatMessage(emailMessages.passwordPlaceholder)}
+            type="password"
+          />
+          <View>
+            <Button disabled={disabled}>
+              <FormattedMessage {...buttonsMessages.signIn} />
+            </Button>
+            <Space />
+            <Button
               disabled={disabled}
-              label=""
-              maxLength={1000}
-              placeholder={intl.formatMessage(emailMessages.passwordPlaceholder)}
-              type="password"
-            />
-          }
-          {!forgetPasswordIsShown ?
-            <View>
-              <Button disabled={disabled}>
-                <FormattedMessage {...buttonsMessages.signIn} />
-              </Button>
-              <Space />
-              <Button
-                disabled={disabled}
-                onClick={this.onSignUpClick}
-                type="button"
-              >
-                <FormattedMessage {...buttonsMessages.signUp} />
-              </Button>
-              <Space />
-              <Button
-                disabled={disabled}
-                onClick={this.onForgetPasswordClick}
-                type="button"
-              >
-                <FormattedMessage {...emailMessages.passwordForgotten} />
-              </Button>
-              {recoveryEmailSent &&
-                <Message>
-                  <FormattedMessage {...emailMessages.recoveryEmailSent} />
-                </Message>
-              }
-            </View>
-          :
-            <View>
-              <Button disabled={disabled}>
-                <FormattedMessage {...emailMessages.resetPassword} />
-              </Button>
-              <Space />
-              <Button
-                disabled={disabled}
-                onClick={this.onForgetPasswordClick}
-                type="button"
-              >
-                <FormattedMessage {...buttonsMessages.dismiss} />
-              </Button>
-            </View>
-          }
+              onClick={this.onSignUpClick}
+              type="button"
+            >
+              <FormattedMessage {...buttonsMessages.signUp} />
+            </Button>
+            <Space />
+    
+          </View>
         </Panel>
       </Form>
     );
   }
+
 
 }
 
@@ -165,5 +105,5 @@ export default connect(
     disabled: state.auth.formDisabled,
     error: state.auth.error,
   }),
-  { resetPassword, signIn, signUp },
+  { signIn, signUp },
 )(Email);

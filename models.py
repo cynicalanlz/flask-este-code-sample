@@ -2,18 +2,20 @@ from app import db
 from sqlalchemy.dialects.postgresql import JSON
 from werkzeug.security import generate_password_hash, \
 	 check_password_hash
+import datetime
 
 
 class User(db.Model):
 	__tablename__ = 'users'
 
 	id = db.Column(db.Integer, primary_key=True)
-	username = db.Column(db.String(), nullable=False)
+	created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+	email = db.Column(db.String(), unique=True, nullable=False)
 	pw_hash = db.Column(db.String(), nullable=False)
 	profile = db.Column(JSON)
 
 	def __init__(self, username, password, profile):
-		self.username = username
+		self.email = username
 		self.profile = profile
 		self.set_password(password)
 
