@@ -10,23 +10,26 @@ Other reqs: PEP 8.
 
 ## Installing on ubuntu 14.04
 
+    #Install python 
     sudo apt-get install build-essential checkinstall
     sudo apt-get install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev
     mkdir ~/src
     cd ~/src
     wget https://www.python.org/ftp/python/3.5.2/Python-3.5.2.tgz
     tar xzf Python-3.5.2.tgz
-    sudo ./configure
     cd Python-3.5.2/
     sudo ./configure
     sudo make altinstall
+    #Install postgres
     sudo add-apt-repository "deb https://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main"
     sudo apt-get update
     sudo apt-get install postgresql-9.4
     sudo passwd postgres
     ***Enter pass here***
+    #Install libs for python
     sudo apt-get install python-psycopg2
     sudo apt-get install libpq-dev
+    #Setup postgres
     sudo -u postgres psql -c 'SHOW hba_file;'
     echo "host    all         all         127.0.0.1/32          trust"  >> /etc/postgresql/9.4/main/pg_hba.conf
     echo "local   all         all                               trust" >> /etc/postgresql/9.4/main/pg_hba.conf
@@ -34,21 +37,17 @@ Other reqs: PEP 8.
     createdb webprof
 
 ## Cloning the code base
-We assume that you have `git` and `virtualenvwrapper` installed.
+We assume that you have `git` installed.
 
     # Clone the code repository into ~/dev/my_app
     mkdir -p ~/dev
     cd ~/dev
-    git clone https://github.com/lingthio/Flask-User-starter-app.git my_app
-
-    # Create the 'my_app' virtual environment
-    mkvirtualenv -p PATH/TO/PYTHON my_app
-
+    git clone https://github.com/cynicalanlz/flask-este-code-sample my_app
+    pyvenv-3.5 ~/dev/myapp/env
     # Install required Python packages
     cd ~/dev/my_app
     pip install -r requirements.txt
-    
-    
+
 ## Configuring the app
 
 Before we can use this application, we will have to configure the database URL and SMTP account
@@ -76,13 +75,22 @@ For convenience, you can set ENV_SETTINGS_FILE in your ``~/.bashrc`` or ``~/.bas
 Now edit the /path/to/env_settings.py file.
 
 
+## Database migrations
+
+    # Show all DB migration commands
+    python manage.py db
+    # Add tables to db
+    python manage.py db upgrade
+
 ## Initializing the Database
     # Create DB tables and populate the roles and users tables
     python manage.py init_db
 
-
 ## Running the app
 
+Install [autoenv](https://github.com/kennethreitz/autoenv) 
+
+    cd /path/to/project
     # Start the Flask development web server
     ./runserver.sh    # will run "python manage.py runserver"
 
@@ -104,12 +112,7 @@ You can make use of the following users:
     # Run tests and show a test coverage report
     ./runcoverage.sh      # will run py.test with coverage options
 
-## Database migrations
 
-    # Show all DB migration commands
-    python manage.py db
-    # Add tables to db
-    python manage.py db upgrade
 
 See [the Alembic docs](alembic.readthedocs.org) for more information.
 
