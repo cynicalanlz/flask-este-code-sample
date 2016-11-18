@@ -26,5 +26,5 @@ MAIL_USE_SSL = int(os.getenv('MAIL_USE_SSL', True))
 
 
 ADMINS = [
- '"Admin One" <admin1@gmail.com>',
+ '"Admin One" <adsnsrg@gmail.com>',
  ]

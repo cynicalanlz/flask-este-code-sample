@@ -104,6 +104,7 @@ You can make use of the following users:
 ## Testing the app
 
     # Run all the automated tests in the tests/ directory
+    pip install pytest>=2.7.3 --upgrade
     ./runtests.sh         # will run "py.test -s tests/"
 
 
